@@ -8,7 +8,7 @@ head(acc_15)
 acc_16 <- read.csv ("Accidents_2016.csv", header=TRUE,sep=",",dec=".")
 dim(acc_16)
 head(acc_16)
-
+#test
 acc <- rbind(acc_15,acc_16)
 dim(acc)
 head(acc)
