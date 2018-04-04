@@ -42,9 +42,14 @@ head(acc)
 # Define variable as factor and define levelsand labels.
 acc$Accident_Severity_f <-factor (acc$Accident_Severity, levels= c(1,2,3),
                         labels = c("Fatal", "Serious", "Slight"))
+
+acc$severity_combined [acc$Accident_Severity_f == "Fatal" | acc$Accident_Severity_f == "Serious"] <- "Serious"
+acc$severity_combined [acc$Accident_Severity_f == "Slight" ] <- "Slight"
+acc$severity_combined
+
 # Describe numerically
 # Frequency count
-t <-table (acc$Accident_Severity_f)
+t <-table (acc$severity_combined)
 t
 # As proportion over sample size
 t1 <-prop.table(t)
@@ -55,8 +60,9 @@ t2
 
 barplot(t2,
         beside = TRUE,
-        col=c("lightskyblue1", "lightskyblue2", "lightskyblue3"),
-        xlab = "Accident Severity",
+        col=c("450", "475"),
+        xlab = "Accident Severity
+        Source: Department of transport, UK Gov., www.data.gov.uk",
         main="Accident Severity Percentage")
 
 ### Convert date to quarter
@@ -81,17 +87,17 @@ barplot(t1_season_f,
 
 ###DESCRIBE DV (Accident severity) by the factor levels in the IV (cross tabulation of DV by IV)
 
-describe(acc$Accident_Severity)
+describe(acc$severity_combined)
           n     %
-Fatal     3311   1.2
-Serious  41763  15.1
+Serious  45074  16.3
 Slight  231603  83.7
 Total   276677 100.0
 
 barplot(t2,
         beside = TRUE,
         col=c("lightskyblue1", "lightskyblue2", "lightskyblue3"),
-        xlab = "Accident Severity",
+        xlab = "Accident Severity
+        Source: Department of transport, UK Gov., www.data.gov.uk",
         main="Accident Severity Percentage")
 
 describe(acc$Season)
@@ -104,15 +110,17 @@ Total  276677 100.0
 
 barplot(t1_season_f,
         beside = TRUE,
-        col=c("lightskyblue1", "lightskyblue2", "lightskyblue3"),
-        xlab = "Season",
+        col=c("lightskyblue1", "lightskyblue2", "lightskyblue3", "lightskyblue4"),
+        xlab = "Season
+        Source: Department of transport, UK Gov., www.data.gov.uk",
+        ylab = "Percentage", 
         main="Season Percentage")
 
 #DV aggregate distribution
-TOTAL<- table(acc$Accident_Severity_f)
+TOTAL<- table(acc$severity_combined)
 
 #Basic crosstable
-ct1 <- table(acc$Accident_Severity_f,
+ct1 <- table(acc$severity_combined,
              acc$Season)
 ct1
 #Merge together the Cross tab and DV dist
@@ -124,11 +132,10 @@ cp_ct2 <- prop.table (ct2,2)*100
 # Add column totals (100)
 addmargins (cp_ct2,1)
 
-            winter     spring     summer       fall      TOTAL
-Fatal     1.256604   1.172843   1.217007   1.143656   1.196702
-Serious  14.324090  14.850976  15.668079  15.468159  15.094496
-Slight   84.419306  83.976180  83.114914  83.388185  83.708801
-Sum     100.000000 100.000000 100.000000 100.000000 100.000000
+          winter    spring    summer      fall    TOTAL
+Serious  15.58069  16.02382  16.88509  16.61182  16.2912
+Slight   84.41931  83.97618  83.11491  83.38818  83.7088
+Sum     100.00000 100.00000 100.00000 100.00000 100.0000
 
 
 
@@ -140,7 +147,7 @@ chisq.test(ct1)
 ### Pearson's Chi-squared test
 
 ###data:  ct1
-###X-squared = 63.833, df = 6, p-value = 7.464e-12 (0.000)
+###X-squared = 52.025, df = 3, p-value = 2.959e-11 (0.000)
 
 ###CONCLUSION 
 ### As P. Value < 0.05 we reject H0 
@@ -152,18 +159,18 @@ chisq.test(ct1)
 par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE)
 barplot(cp_ct2,
         beside = TRUE,
-        col=c("lightskyblue1", "lightskyblue2", "lightskyblue3"),
-        main="Accident Severity, 
-        by season (percentages)")
-legend("topright", inset=c(-0.3,0),legend = c("Fatal", "Serious", "Slight", " ", "Chi2: 63.83", "P.Val: 0.000"), fill=c("lightskyblue1", "lightskyblue2", "lightskyblue3", "white", "white", "white"), border="white")
+        col=c("lightskyblue1", "lightskyblue2"), xlab = "SEASON
+        Source: Department of transport, UK Gov., www.data.gov.uk", 
+        main="Accident Severity, by Season (percentage)")
+legend("topright", inset=c(-0.2,0),legend = c("Serious", "Slight", " ", "Chi2: 52.025", "P.Val: 0.000"), fill=c("lightskyblue1", "lightskyblue2", "white", "white", "white"), border="white")
 
 ##Cramer's V season  (0 no association, 1 perfect association)
 cramersV(ct1)
-[1] 0.01074044
+##[1] 0.01371254
 
 
 ###MOSAIC PLOT
-mosaic(~acc$Season + acc$Accident_Severity_f, data=acc, shade=TRUE, legend=TRUE)
+mosaic(~acc$Season + acc$severity_combined, data=acc, shade=TRUE, legend=TRUE)
 
 ############################################################################
 
@@ -194,7 +201,9 @@ t2_area
 barplot(t2_area,
         beside = TRUE,
         col=c("lightskyblue1", "lightskyblue2"),
-        xlab = "Area Type",
+        xlab = "Area Type
+        Source: Department of transport, UK Gov., www.data.gov.uk",
+        ylab = "Percentage",
         main="Area Type Percentage")
 
 describe(acc$area_type_f)
@@ -206,7 +215,7 @@ describe(acc$area_type_f)
 #Total       276677 100.0
 
 #Basic crosstable
-ct1_area <- table(acc$Accident_Severity_f,
+ct1_area <- table(acc$severity_combined,
              acc$area_type_f)
 ct1_area
 #Merge together the Cross tab and DV dist
@@ -219,11 +228,10 @@ cp_ct2_area
 # Add column totals (100)
 addmargins (cp_ct2_area,1)
 
-          Urban      Rural      TOTAL
-Fatal     0.6591045   2.206571   1.196702
-Serious  13.3083723  18.448430  15.094496
-Slight   86.0325232  79.344999  83.708801
-Sum     100.0000000 100.000000 100.000000
+            Urban   Rural    TOTAL
+Serious  13.96748  20.655  16.2912
+Slight   86.03252  79.345  83.7088
+Sum     100.00000 100.000 100.0000
 
 #### PERFOM THE NUMERIC TEST CHI2 TEST
 
@@ -234,31 +242,34 @@ chisq.test(ct1_area)
 ### Pearson's Chi-squared test
 
 ### data:  ct1_area
-### X-squared = 2688.2, df = 2, p-value < 2.2e-16
+### X-squared = 2056.7, df = 1, p-value < 2.2e-16
 
 
 ###CONCLUSION 
 ### As P. Value < 0.05 we reject H0 
-### H0.: Percentage of severity of accidents with fatal/serious/slight is the same in Urban, Rural, Unallocated area
-### H1.: Percentage of severity of accidents with fatal/serious/slight is not the same in Urban, Rural, Unallocated area
+### H0.: Percentage of severity of accidents with fatal/serious/slight is the same in Urban and Rural area
+### H1.: Percentage of severity of accidents with fatal/serious/slight is not the same in Urban and Rural area
 
 ###GRAPHIC REPRESENTATION COMBINED BARPLOT 
 
 par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE)
 barplot(cp_ct2_area,
         beside = TRUE,
-        col=c("lightskyblue1", "lightskyblue2", "lightskyblue3"),
+        col=c("lightskyblue1", "lightskyblue2"),
+        xlab = "Area Type
+        Source: Department of transport, UK Gov., www.data.gov.uk",
+        ylab = "Percentage",
         main="Accident Severity, 
-        by Area Type (percentages)")
-legend("topright", inset=c(-0.3,0),legend = c("Fatal", "Serious", "Slight", " ", "Chi2: 2688.2", "P.Val: 0.000"), fill=c("lightskyblue1", "lightskyblue2", "lightskyblue3", "white", "white", "white"), border="white")
+        by Area Type (percentage)")
+legend("topright", inset=c(-0.2,0),legend = c("Serious", "Slight", " ", "Chi2: 2056.7", "P.Val: 0.000"), fill=c("lightskyblue1", "lightskyblue2", "white", "white", "white"), border="white")
 
 ##Cramer's V season  (0 no association, 1 perfect association)
 cramersV(ct1_area)
-#[1] 0.09857173
+#[1] 0.08621851
 
 
 ###MOSAIC PLOT
-mosaic(~acc$area_type_f + acc$Accident_Severity_f, data=acc, shade=TRUE, legend=TRUE)
+mosaic(~acc$area_type_f + acc$severity_combined, data=acc, shade=TRUE, legend=TRUE)
 
 ##SQUARE PANEL OF PLOTS
 par(mfrow=c(2,2))
